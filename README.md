@@ -23,7 +23,7 @@
     
 6. Acondicionamiento
     
-    - ACS712 → ADC + 3.3V→ ESP32
+    - ACS758 → ADC + 3.3V→ ESP32
         
     - ZMPT101B → ADC + 3.3V→ ESP32
         
@@ -39,7 +39,7 @@
 
 El proyecto **AGRAR SMART GREENHOUSE** propone una estación de monitoreo y análisis de consumo energético (tensión y corriente de actuador) y condiciones ambientales (temperatura y humedad) en un invernadero rural. Este procesos ya está siendo aplicado por la empresa Agrar Ingeniería SAS de Zipaquirá mediante un control PID e instrumentos de la compañía FullGauge de Brasil. Para el Avance 1 se entregan el modelamiento, selección de sensores, diseños electrónicos preliminares, BOM, cálculos de acondicionamiento y la planificación.
 Sensores seleccionados:
-	**ACS712-20A** (corriente AC), **ZMPT101B** (tensión AC) y **SHT45** (temperatura y humedad).
+	**ACS758-100A** (corriente AC), **ZMPT101B** (tensión AC) y **SHT45** (temperatura y humedad).
 
 ---
 
@@ -66,7 +66,7 @@ flowchart TD
   %% Sensores y linea AC
   subgraph LINE_AC
     A1[AC LINE ~220V]
-    A1 -->|Corriente| ACS712[ACS712 ±20A - Sensor de corriente]
+    A1 -->|Corriente| ACS758[ACS758 ±100A - Sensor de corriente]
     A1 -->|Tensión| ZMPT101B[ZMPT101B - Sensor de tensión AC]
   end
 
@@ -74,7 +74,7 @@ flowchart TD
   SHT45[SHT45 - Temp & Humidity - I2C]
 
   %% Etapas de acondicionamiento
-  ACS712 -->|0.5 - 4.5 V| AmpCorr[Acond. Corriente - OpAmp diff + Vbias]
+  ACS758 -->|0.5 - 4.5 V| AmpCorr[Acond. Corriente - OpAmp diff + Vbias]
   ZMPT101B -->|mV AC| AmpVolt[Acond. Voltaje - Burden + OpAmp + Vbias]
 
   AmpCorr -->|0 - 3.3 V| ADC1[ADC interno ESP32 / ADS1115]
@@ -92,21 +92,21 @@ flowchart TD
   subgraph PWR
     PSU[Power supply 5V & 3.3V]
   end
-  PSU --> ACS712
+  PSU --> ACS758
   PSU --> ZMPT101B
   PSU --> SHT45
   PSU --> ESP32
 
-  ACS712 -.->|Protección: fusible MOV TVS| AmpCorr
+  ACS758 -.->|Protección: fusible MOV TVS| AmpCorr
   ZMPT101B -.->|Protección: fusible MOV TVS| AmpVolt
 ```
 
 ---
 ## 4. Sensores seleccionados — descripción técnica completa y documentación oficial
 
-### A. ACS712 (versión ±20 A)
+### A. ACS758 (versión ±20 A)
 
-**Resumen:** sensor de corriente Hall integrado (Allegro) para medida AC/DC. Salida analógica centrada en VCC/2; sensibilidad típica para versión 20A ≈ 100 mV/A; aislamiento galvánico entre conductor y electrónica. Datos oficiales y caracterización en la página/datasheet de Allegro. ([Allegro MicroSystems](https://www.allegromicro.com/-/media/files/datasheets/acs712-datasheet.ashx?utm_"[PDF] ACS712 - Allegro MicroSystems"))
+**Resumen:** sensor de corriente Hall integrado (Allegro) para medida AC/DC. Salida analógica centrada en VCC/2; sensibilidad típica para versión 100A ≈ 100 mV/A; aislamiento galvánico entre conductor y electrónica. Datos oficiales y caracterización en la página/datasheet de Allegro. ([Allegro MicroSystems](https://www.allegromicro.com/-/media/files/datasheets/ACS758-datasheet.ashx?utm_"[PDF] ACS758 - Allegro MicroSystems"))
 #### **Clasificación**
 
 - **Señal de salida:** Analógico  
@@ -127,9 +127,9 @@ flowchart TD
 
 - Alimentación: 5.0 V típica.
     
-- Sensitividad: típica 100 mV/A.
+- Sensitividad: típica 40 mV/A.
     
-- Rango: ±20 A.
+- Rango: ±100 A.
     
 - Offset: Vout = Vcc/2
     
@@ -221,7 +221,7 @@ flowchart TD
 
 | Componente | Señal de salida | Energía | Tipo de contacto | Visualización | Modo de operación | Variable medida | Tecnología             |
 | ---------- | --------------- | ------- | ---------------- | ------------- | ----------------- | --------------- | ---------------------- |
-| ACS712-20A | Analógico       | Activo  | Intrusivo        | Ciego         | Comparativo       | Corriente AC/DC | Efecto Hall            |
+| ACS758-100A | Analógico       | Activo  | Intrusivo        | Ciego         | Comparativo       | Corriente AC/DC | Efecto Hall            |
 | ZMPT101B   | Analógico       | Activo  | Intrusivo        | Ciego         | Comparativo       | Voltaje AC      | Inductivo              |
 | SHT45      | Digital         | Activo  | No ivasivo       | Ciego         | Comparativo       | Temp. y Humedad | Capacitivo + Termistor |
 |            |                 |         |                  |               |                   |                 |                        |
@@ -236,7 +236,7 @@ flowchart TD
 |   # | Ítem                                                |                        Modelo | Cant. | Precio unitario (COP) |    Precio (COP) |
 | --: | --------------------------------------------------- | ----------------------------: | ----: | --------------------: | --------------: |
 |   1 | SoC                                                 |          ESP32-WROOM DevBoard |     1 |                35,000 |          35,000 |
-|   2 | Sensor de Corriente                                 |            Módulo ACS712 ±20A |     1 |                15,000 |          15,000 |
+|   2 | Sensor de Corriente                                 |            Módulo ACS758 ±100A |     1 |                15,000 |          15,000 |
 |   3 | Sensor tensión                                      |               Módulo ZMPT101B |     1 |                12,000 |          12,000 |
 |   4 | Sensor Humedad y Temperatura                        |         SHT45-AD1B + breakout |     1 |                23,000 |          23,000 |
 |   5 | Display HMI                                         |            TFT Touch SPI 3.5" |     1 |               120,000 |         120,000 |
@@ -260,7 +260,7 @@ flowchart TD
 ---
 ## 6. Diseño electrónico preliminar y etapa de acondicionamiento
 
-### 6.1 ACS712 (±20 A) → ADC ESP32
+### 6.1 ACS758 (±20 A) → ADC ESP32
 
 - **Señal actual:** Salida analógica centrada en 2.5 V, variando aproximadamente entre 0.5 V y 4.5 V.
 - **Salida requerida:** Señal ajustada al rango seguro de 0–3.3 V para el ADC del ESP32.
@@ -286,7 +286,7 @@ flowchart TD
 
 ### 6.4 Flujo de señal hasta el MCU
 
-- **ACS712** → Amplificador diferencial/sumador (ajuste de escala y offset) → ADC ESP32.  
+- **ACS758** → Amplificador diferencial/sumador (ajuste de escala y offset) → ADC ESP32.  
 - **ZMPT101B** → Amplificador no inversor con Vbias (ajuste de escala y offset) → ADC ESP32.  
 - **SHT45** → Conexión I²C directa → ESP32.
 
@@ -343,7 +343,7 @@ gantt
 
 ## 8. Análisis de riesgos y mitigaciones
 
-- **Ruido y deriva en ACS712** — _Mitigación:_ filtro analógico + calibración periódica, usar referencia estable y ADC externo si precisión crítica.
+- **Ruido y deriva en ACS758** — _Mitigación:_ filtro analógico + calibración periódica, usar referencia estable y ADC externo si precisión crítica.
     
 - **Sobretensiones en red rural** — _Mitigación:_ fusibles en primaria, varistor, protección por relé aislador.
     
