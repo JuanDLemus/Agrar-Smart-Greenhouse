@@ -13,15 +13,15 @@
     
 4. Sensores
     
-    - ACS712-20A (corriente)
+    - Corriente
         
-    - ZMPT101B (tensión AC)
+    - Tensión AC
         
-    - SHT45 (temperatura y humedad)
+    - Temperatura y Humedad
         
 5. BOM preliminar
     
-6. Diseño electrónico
+6. Acondicionamiento
     
     - ACS712 → ADC + 3.3V→ ESP32
         
