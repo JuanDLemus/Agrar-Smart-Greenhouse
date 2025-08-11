@@ -258,13 +258,7 @@ flowchart TD
 |     | **TOTAL**                                           |                               |       |                       | **355,400 COP** |
 
 ---
-
-## 6. Diseño electrónico preliminar y etapa de acondicionamiento — cálculos esenciales
-
----
 ## 6. Diseño electrónico preliminar y etapa de acondicionamiento
-
----
 
 ### 6.1 ACS712 (±20 A) → ADC ESP32
 
