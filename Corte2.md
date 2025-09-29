@@ -1,10 +1,57 @@
-# AGRAR SMART GREENHOUSE — **Avance 2 (Adquisición de datos reales, calibrado)**
-
+# AGRAR SMART GREENHOUSE — **Avance 2**
 **Curso:** Instrumentación aplicada a procesos mecánicos — 2025-2  
-**Estudiante:** Juan Diego Lemus Rey — RRY 0000243911 — juanlere@unisabana.edu.co  
+
+**Estudiante:** Juan Diego Lemus Rey — 0000243911 — juanlere@unisabana.edu.co  
 **Profesor:** Dr. Andry Contreras — Instrumentación ENF  
 **Fecha:** 29/09/2025
 
+---
+
+## Índice
+1. Resumen ejecutivo  
+2. Objetivos específicos (Avance 2)  
+3. Descripción del sistema (arquitectura)  
+4. Sensores y BOM preliminar  
+5. **Adquisición de datos — del código base (explicación técnica)** ✅  
+6. Diseño electrónico y acondicionamiento de señales  
+7. Protocolo experimental y **datos recolectados** (tabla + JSON) ✅  
+8. Procesamiento de señales y métricas (Vrms/Irms/P/FP)  
+9. Análisis de errores, incertidumbre y validación  
+10. HMI TFT & Dashboard: publicación y evidencias (ESPACIOS PARA IMAGEN) ✅  
+11. Plan de trabajo (Gantt) actualizado  
+12. Apéndices (A: código base comentado; B: checklist de pruebas)
+
+---
+
+## 1) Resumen ejecutivo
+Se implementó la cadena de medición de **tensión AC (ZMPT101B)**, **corriente (ACS712/ACS758)** y **ambiente (SHT45)** con **ESP32**, visualización local (TFT) y telemetría para dashboard. Este avance documenta: (i) cómo el **código base** realiza el muestreo/estimación **RMS**, (ii) la **calibración operativa** empleada en campo, (iii) los **datos de ejemplo** (3 niveles de carga) con su **formato de registro** (JSON/CSV), y (iv) espacios para evidencias (fotos/capturas) exigidas en la entrega.
+
+---
+
+## 2) Objetivos específicos (Avance 2)
+- Integrar lectura de ZMPT101B/ACS*** y SHT45 con **ESP32** + **ADC de 12 bits**.  
+- Operar el **algoritmo RMS** y el **promediado móvil** del código base (ventanas de 1000 muestras por canal; reporte cada ~2 s).  
+- Registrar **datasets** con sello de tiempo y **publicar** a dashboard (MQTT/HTTP).  
+- Estimar **constantes de calibración** \(K_V, K_I\) y documentar su uso.  
+- Entregar informe con **datos, capturas y checklist**.
+
+---
+
+## 3) Descripción del sistema (arquitectura)
+```mermaid
+flowchart TD
+  A1[AC LINE ~220 V] -->|Corriente| ACS[ACS712/ACS758]
+  A1 -->|Tensión| ZMPT[ZMPT101B]
+  ACS -->|0.5–4.5 V| ACOND_I[Divisor/Buffer + RC + Vbias]
+  ZMPT -->|mV AC|   ACOND_V[Burden + OpAmp + RC + Vbias]
+  ACOND_I --> ADC_I[ADC ESP32 (12 bits)]
+  ACOND_V --> ADC_V[ADC ESP32 (12 bits)]
+  SHT[SHT45 I²C] --> ESP[ESP32]
+  ADC_I --> ESP
+  ADC_V --> ESP
+  ESP -->|SPI| TFT[TFT Touch 3.5"]
+  ESP -->|Wi-Fi/MQTT| Cloud[Dashboard]
+```
 ---
 
 ## Cambios solicitados en este envío
