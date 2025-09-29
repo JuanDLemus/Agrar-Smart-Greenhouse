@@ -263,14 +263,14 @@ float readCurrentRMS() {
 
 ---
 
-## 11) Plan de trabajo (Gantt) actualizado
+## 11) Plan de trabajo
 
 ```mermaid
 gantt
   dateFormat  YYYY-MM-DD
   title Avance 2 — Plan de semana
   section Adquisición y calibración
-  Montaje/Seguridad    :a1, 2025-08-22, 3d
+  Montaje/Seguridad    :a1, 2025-09-19, 3d
   Captura datasets     :a2, after a1, 3d
   Calibración K_V/K_I  :a3, after a2, 2d
   section Integración
