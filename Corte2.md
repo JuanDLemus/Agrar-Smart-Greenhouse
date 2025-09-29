@@ -38,20 +38,47 @@ Se implementó la cadena de medición de **tensión AC (ZMPT101B)**, **corriente
 ---
 
 ## 3) Descripción del sistema (arquitectura)
+
 ```mermaid
 flowchart TD
-  A1[AC LINE ~220 V] -->|Corriente| ACS[ACS712/ACS758]
-  A1 -->|Tensión| ZMPT[ZMPT101B]
-  ACS -->|0.5–4.5 V| ACOND_I[Divisor/Buffer + RC + Vbias]
-  ZMPT -->|mV AC|   ACOND_V[Burden + OpAmp + RC + Vbias]
-  ACOND_I --> ADC_I[ADC ESP32 (12 bits)]
-  ACOND_V --> ADC_V[ADC ESP32 (12 bits)]
-  SHT[SHT45 I²C] --> ESP[ESP32]
-  ADC_I --> ESP
-  ADC_V --> ESP
-  ESP -->|SPI| TFT[TFT Touch 3.5"]
-  ESP -->|Wi-Fi/MQTT| Cloud[Dashboard]
+  %% Sensores y linea AC
+  subgraph LINE_AC
+    A1[AC LINE ~220V]
+    A1 -->|Corriente| ACS758[ACS758 ±100A - Sensor de corriente]
+    A1 -->|Tensión| ZMPT101B[ZMPT101B - Sensor de tensión AC]
+  end
+
+  %% Sensor ambiental
+  SHT45[SHT45 - Temp & Humidity - I2C]
+
+  %% Etapas de acondicionamiento
+  ACS758 -->|0.5 - 4.5 V| AmpCorr[Acond. Corriente - OpAmp diff + Vbias]
+  ZMPT101B -->|mV AC| AmpVolt[Acond. Voltaje - Burden + OpAmp + Vbias]
+
+  AmpCorr -->|0 - 3.3 V| ADC1[ADC interno ESP32 / ADS1115]
+  AmpVolt -->|0 - 3.3 V| ADC2[ADC interno ESP32 / ADS1115]
+
+  %% MCU y salidas
+  ADC1 --> ESP32[ESP32-WROOM]
+  ADC2 --> ESP32
+  SHT45 -->|I2C| ESP32
+
+  ESP32 -->|SPI| TFT35[TFT 3.5 Touch HMI]
+  ESP32 -->|WiFi| Dashboard[Web Dashboard]
+
+  %% Alimentación y protecciones
+  subgraph PWR
+    PSU[Power supply 5V & 3.3V]
+  end
+  PSU --> ACS758
+  PSU --> ZMPT101B
+  PSU --> SHT45
+  PSU --> ESP32
+
+  ACS758 -.->|Protección: fusible MOV TVS| AmpCorr
+  ZMPT101B -.->|Protección: fusible MOV TVS| AmpVolt
 ```
+
 ---
 
 ## Cambios solicitados en este envío
