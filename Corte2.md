@@ -385,3 +385,4 @@ void loop() {
   delay(100);
 }
 ```
+<img width="1917" height="831" alt="dashboard" src="https://github.com/user-attachments/assets/01881f7a-7806-4891-905e-5356b9b31f7e" />
