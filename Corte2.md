@@ -1,4 +1,3 @@
-
 # AGRAR SMART GREENHOUSE — **Avance 2 (Adquisición de datos reales)**
 
 **Curso:** Instrumentación aplicada a procesos mecánicos — 2025-2
