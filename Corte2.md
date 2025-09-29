@@ -89,6 +89,18 @@ flowchart TD
 5) Se **dejan espacios para imágenes** (montaje, HMI y dashboard) y una **tabla con datos recolectados** y su formato JSON.
 
 ---
+## 4) Sensores y BOM — **Resumen (Avance 2)**
+
+- **Sensores:** **ZMPT101B** (tensión AC); **ACS712-20A** (≤20 A) *o* **ACS758-50B/100B** (picos altos); **SHT45** (T/RH, I²C, 3.3 V).
+- **Acondicionamiento:** Burden calculado (ZMPT) + **op-amp rail-to-rail** (MCP6002/TLV2372) con **Vbias≈1.65 V**; **RC antialias 400–500 Hz**; escalado/limitación a **0–3.3 V**.
+- **Adquisición/MCU:** **ESP32-WROOM** (ADC 12-bit). *Opcional mejora:* **ADS1115** 16-bit (I²C) para resolución/PSRR.
+- **Protecciones y potencia:** **Fusible 1 A**, **MOV 275 VAC**, **TVS SMAJ/SMBJ** en entradas analógicas; fuente **5 V→3.3 V** con buen desacople.
+- **Interfaz (estado actual):** Dashboard **HTML-CSS-JS** embebido en `builtinfiles.h`; **Wi-Fi/MQTT** planificado; **TFT SPI** aún **pendiente**.
+- **Notas de calibración:** Firmware operativo con **volt_calib≈480** y **curr_calib≈9.6**; ajustar constantes según el modelo **ACS712 vs ACS758** y la carga real.
+
+> Resumen intencionalmente **sin desglose de costos/cantidades** (no requerido en este corte).
+
+---
 
 ## 5) Adquisición de datos — del código base (explicación técnica) ✅
 
