@@ -385,12 +385,3 @@ void loop() {
   delay(100);
 }
 ```
-
-### B) **Checklist de sesión de pruebas**
-
-- ☐ Protecciones (fusible/MOV/TVS) verificadas
-- ☐ Burden/ganancias en rango (sin saturación)
-- ☐ Carga resistiva **conocida** (100–200 W) y **multímetro True RMS**
-- ☐ Capturas: **Montaje**, **HMI**, **Dashboard**
-- ☐ Exportación de **CSV/JSON** con `ts, Vrms, Irms, P, PF, T, RH`
-- ☐ Documentar/calcular **K_V, K_I** y actualizar informe
