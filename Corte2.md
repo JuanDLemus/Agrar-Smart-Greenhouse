@@ -229,7 +229,7 @@ V: 3.98 V, C: 0.00 A, T: 25.00 °C, H: 54.57 %
 
 * El **código antiguo** servía `/json` y usaba **minúsculas**: `voltage, current, apparent_power, energy_Wh, cost_COP, temp_C, humidity_pct`.
 * Para que `builtinfiles.h` funcione sin modificar su JS, el **servidor debe exponer** `/api/sensores` **y adaptar** las claves.
-![Vista preliminar del dashboard](Dashboard.png)
+![Vista preliminar del dashboard](dashboard.png)
 
 ### 9.3 Esqueleto sugerido del *handler* HTTP (adaptador)
 
