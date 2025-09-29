@@ -283,7 +283,7 @@ gantt
 
 ## 12) Apéndices
 
-### A) **Código base (para referencia y trazabilidad)** — _tal como fue suministrado_
+### A) **Código base (para referencia y trazabilidad)** —
 
 ```cpp
 #include <Wire.h>
