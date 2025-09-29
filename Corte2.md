@@ -270,13 +270,13 @@ gantt
   dateFormat  YYYY-MM-DD
   title Avance 2 — Plan de semana
   section Adquisición y calibración
-  Montaje/Seguridad    :a1, 2025-09-22, 3d
+  Montaje/Seguridad    :a1, 2025-08-22, 3d
   Captura datasets     :a2, after a1, 3d
   Calibración K_V/K_I  :a3, after a2, 2d
   section Integración
-  HMI + Dashboard      :b1, 2025-09-24, 4d
+  HMI + Dashboard      :b1, 2025-09-27, 4d
   section Informe
-  Redacción + evidencias:b2, 2025-09-27, 3d
+  Redacción + evidencias:b2, 2025-09-29, 3d
 ```
 
 ---
