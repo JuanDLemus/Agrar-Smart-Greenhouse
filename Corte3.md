@@ -1,5 +1,4 @@
-**Design and Implementation of an ESP32-Based Industrial Temperature and Humidity Smart Greenhouse System**
-**Diseño e implementación de un sistema inteligente de invernadero para temperatura y humedad basado en ESP32**
+# **Diseño e implementación de un sistema inteligente de invernadero para temperatura y humedad basado en ESP32**
 
 Juan Diego Lemus Rey
 Universidad de La Sabana, Colombia
