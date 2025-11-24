@@ -108,6 +108,7 @@ Desde el punto de vista electrónico, es relevante destacar:
 * La disposición de planos de masa y separación física entre pistas de potencia y señales de baja amplitud, esencial para medir tensiones en el rango de milivoltios provenientes de los sensores de potencia.
 
 Esta plataforma reduce el esfuerzo de diseño de electrónica de potencia y deja al diseñador centrarse en la elección, conexión y calibración de módulos de sensado externos.
+![Figura 1 – Montaje del prototipo: KC868-A6, ZMPT101B, SHT45 y ventilador de prueba](sandbox:/mnt/data/montaje1.jpg)
 
 ### B. Sensado de temperatura y humedad: SHT45
 
@@ -139,12 +140,16 @@ El bus DC de 12 V que alimenta a los ventiladores se cablea físicamente a trav�
 El ZMPT101B es un transformador de tensión compacto diseñado para medición de red monofásica. Los módulos comerciales integran el transformador, una resistencia de carga y un amplificador operacional (habitualmente LM358) configurado para amplificar y centrar la señal secundaria alrededor de VCC/2.
 
 Para aprovechar el margen dinámico del amplificador, el módulo se alimenta con los 12 V disponibles en la KC868. En estas condiciones, la salida puede variar entre 0 y casi 12 V, mientras que las entradas analógicas de la tarjeta solo admiten 0–5 V. Para resolver esta incompatibilidad se implementa una red resistiva con tres resistores de 330 Ω y dos de 220 Ω en configuración de medio puente tipo Wheatstone:
+![Figura 2 – Esquema del medio puente resistivo para el módulo ZMPT101B alimentado a 12 V](sandbox:/mnt/data/mediopuentesim.jpg)
 
 * El nodo de salida del módulo (“OUT”) alimenta la parte superior de la red.
 * La combinación resistiva produce un nodo intermedio “Vmeas” cuyo valor máximo no excede 5 V incluso si OUT alcanza 12 V.
 * La impedancia equivalente vista por el módulo permanece en el rango de kilo-ohmios bajos, asegurando que el LM358 no se sobrecargue, mientras que la fuente para el ADC presenta una impedancia suficientemente baja para evitar errores de muestreo.
 
-El factor de división teórico se calcula en función de los valores de resistor y se ajusta experimentalmente comparando VRMS con un multímetro de referencia para varias tensiones de línea conocidas. Esta misma red se replica en el modelo de Simulink para que la transferencia tensión-ADC sea coherente entre simulación y hardware.
+El factor de división teórico se calcula en función de los valores de resistor y se ajusta experimentalmente con lo que se tenía disponible en el momento.
+![Figura 3 – Implementación física del medio puente resistivo hacia la entrada A2 de la KC868-A6](sandbox:/mnt/data/mediopuentefisico.jpg)
+
+Esta misma red se replica en el modelo de Simulink para que la transferencia tensión-ADC sea coherente entre simulación y hardware.
 
 Desde el punto de vista de hardware, se cuidan las distancias de aislamiento entre el lado de red (primario del ZMPT, bornes de entrada) y la parte de baja tensión, siguiendo buenas prácticas de creepage y clearance. El potenciómetro integrado en el módulo se ajusta durante la etapa de calibración para centrar la señal y ajustar la ganancia global al rango deseado.
 
@@ -270,7 +275,10 @@ El mismo esquema de datos se utilizará para publicar información vía MQTT a u
 
 ## VI. Modelado y co-simulación en MATLAB/Simulink
 
-MATLAB/Simulink se utiliza como banco de pruebas de alta fidelidad para co-diseñar la instrumentación y la lógica de control antes y durante la implementación física. Los modelos imitan el cableado real con componentes básicos y modelos explícitos de sensores, buscando replicar el comportamiento de hardware con el mínimo de abstracciones.
+MATLAB/Simulink se utiliza como banco de pruebas de alta fidelidad para co-diseñar la instrumentación y la lógica de control antes y durante la implementación física.
+![Figura 6 – Vista general del modelo de co-simulación del invernadero en MATLAB/Simulink](sandbox:/mnt/data/simulink.jpg)
+
+Los modelos imitan el cableado real con componentes básicos y modelos explícitos de sensores, buscando replicar el comportamiento de hardware con el mínimo de abstracciones.
 
 ### A. Modelo de suministro eléctrico y etapa de potencia
 
@@ -285,6 +293,7 @@ Los ventiladores se representan como cargas de Simscape controladas por interrup
 ### B. Subsistemas de emulación de sensores
 
 Cada sensor físico tiene un subsistema correspondiente:
+![Figura 5 – Subsistema de medición de tensión y corriente (ACS758 + ZMPT101B) en Simulink](sandbox:/mnt/data/simulinkpowermeter.jpg)
 
 1. **Subsistema de corriente**
    La corriente del bus DC se mide con un sensor ideal cuya salida entra a un bloque “Sensor Voltage + Current”. Dentro se modela el comportamiento del ACS758: ganancia (mV/A), offset DC en VCC/2, fuentes de ruido y el filtro RC. La salida es la señal de tensión equivalente al pin conectado a A1. A continuación, un bloque “C Instrumental Normalizer” aplica el escalado y normalización, incluyendo cuantización del ADC.
@@ -293,6 +302,8 @@ Cada sensor físico tiene un subsistema correspondiente:
    La red AC pasa por un modelo de transformador de tensión que representa el ZMPT101B. El secundario alimenta un bloque de amplificador operacional y luego la red de resistores 3×330/2×220, replicando el medio puente físico. El nodo resultante alimenta el bloque “V Instrumental Normalizer”, que normaliza y cuantiza la señal.
 
 3. **Subsistema SHT45**
+![Figura 4 – Bloque de simulación del SHT45 y adaptador I²C–digital en Simulink](sandbox:/mnt/data/simulacioni2c.jpg)
+
    Perfiles de temperatura y humedad ambiente se generan con fuentes que simulan ciclos día-noche y perturbaciones. Estos perfiles ingresan a un bloque SHT45 (System object o subsistema enmascarado) que replica la interfaz I²C: entrega un marco digital o un bus estructurado. Un adaptador “i2c_to_digital” separa temperatura y humedad y, cuando se requiere, las convierte en tensiones equivalentes al dominio de 3,3 V.
 
 ### C. Emulación de lógica ESP32
@@ -326,6 +337,7 @@ Se modelan ciclos día-noche mediante fuentes periódicas, y se inyecta ruido en
 * Perturbaciones tipo escalón que representan apertura de puertas o frentes fríos.
 
 Estos elementos permiten “estresar” las estrategias de filtrado y los PID antes de implementarlos en hardware.
+![Figura 7 – Respuesta simulada de temperatura, humedad y señal de mando en el osciloscopio de Simulink](sandbox:/mnt/data/scopeTemperaturax3.jpg)
 
 ### E. Estrategia de validación
 
