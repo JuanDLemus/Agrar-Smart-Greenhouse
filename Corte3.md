@@ -108,7 +108,7 @@ Desde el punto de vista electrónico, es relevante destacar:
 * La disposición de planos de masa y separación física entre pistas de potencia y señales de baja amplitud, esencial para medir tensiones en el rango de milivoltios provenientes de los sensores de potencia.
 
 Esta plataforma reduce el esfuerzo de diseño de electrónica de potencia y deja al diseñador centrarse en la elección, conexión y calibración de módulos de sensado externos.
-![Figura 1 – Montaje del prototipo: KC868-A6, ZMPT101B, SHT45 y ventilador de prueba](sandbox:/mnt/data/montaje1.jpg)
+![Figura 1 – Montaje del prototipo: KC868-A6, ZMPT101B, SHT45 y ventilador de prueba](montaje1.jpg)
 
 ### B. Sensado de temperatura y humedad: SHT45
 
